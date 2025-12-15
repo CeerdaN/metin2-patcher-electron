@@ -74,8 +74,8 @@
 
 1. **Clone this repository**
    ```bash
-   git clone https://github.com/yourusername/metin2-launcher.git
-   cd metin2-launcher
+   git clone https://github.com/CeerdaN/metin2-patcher-electron.git
+   cd metin2-patcher-electron
    npm install
    ```
 
@@ -121,7 +121,7 @@ Update your server information:
     "url": "https://yoursite.com/support" // Your support URL
   },
   "repository": {
-    "url": "git+https://github.com/yourusername/metin2-launcher.git"
+    "url": "git+https://github.com/yourusername/metin2-patcher-electron.git"
   }
 }
 ```
@@ -199,7 +199,7 @@ mediaGitHubURL = "https://yoursite.com"
 mediaDiscordURL = "https://discord.gg/yourdiscord"
 
 [ejs.settings]
-sourceGithubLink = "https://github.com/yourusername/metin2-launcher"
+sourceGithubLink = "https://github.com/yourusername/metin2-patcher-electron"
 supportLink = "https://yoursite.com/support"
 ```
 
@@ -349,8 +349,8 @@ To completely reset and redownload everything:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/metin2-launcher.git
-cd metin2-launcher
+git clone https://github.com/CeerdaN/metin2-patcher-electron.git
+cd metin2-patcher-electron
 
 # Install dependencies
 npm install
@@ -365,7 +365,7 @@ npm run lint
 ### Project Structure
 
 ```
-metin2-launcher/
+metin2-patcher-electron/
 ├── app/                                    # Application frontend
 │   ├── assets/
 │   │   ├── css/launcher.css               # Main stylesheet
