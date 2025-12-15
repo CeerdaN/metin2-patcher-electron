@@ -1,0 +1,29 @@
+{
+    "version": "1.0.0",
+    "discord": {
+        "clientId": "YOUR_DISCORD_CLIENT_ID",
+        "smallImageText": "YourServerName",
+        "smallImageKey": "your-logo-key"
+    },
+    "rss": "https://yoursite.com/news.rss",
+    "servers": [
+        {
+            "id": "YourServer-Main",
+            "name": "YourServerName",
+            "description": "Your Metin2 Server Description",
+            "icon": "https://yoursite.com/icon.png",
+            "version": "1.0.0",
+            "address": "yourserver.com",
+            "minecraftVersion": "1.0.0",
+            "discord": {
+                "shortId": "YourServer",
+                "largeImageText": "YourServerName",
+                "largeImageKey": "your-server-logo"
+            },
+            "mainServer": true,
+            "autoconnect": true,
+            "modules": []
+        }
+    ]
+}
+

@@ -1,0 +1,288 @@
+<div id="settingsContainer" style="display: none;">
+    <div id="settingsContainerLeft">
+        <div id="settingsNavContainer">
+            <div id="settingsNavHeader">
+                <span id="settingsNavHeaderText"><%- lang('settings.navHeaderText') %></span>
+            </div>
+            <div id="settingsNavItemsContainer">
+                <div id="settingsNavItemsContent">
+                    <button class="settingsNavItem" rSc="settingsTabAccount" id="settingsNavAccount" selected>Comptes</button>
+                    <button class="settingsNavItem" rSc="settingsTabMetin2">Metin2</button>
+                    <div class="settingsNavSpacer"></div>
+                    <button class="settingsNavItem" rSc="settingsTabAbout">À propos</button>
+                    <div id="settingsNavContentBottom">
+                        <div class="settingsNavDivider"></div>
+                        <button id="settingsNavDone"><%- lang('settings.navDone') %></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="settingsContainerRight">
+        <div id="settingsTabAccount" class="settingsTab">
+            <div class="settingsTabHeader">
+                <span class="settingsTabHeaderText">Gestion des comptes</span>
+                <span class="settingsTabHeaderDesc">Gérez vos comptes et importez des sauvegardes</span>
+            </div>
+
+            <div class="settingsContainer">
+                <!-- Import de comptes -->
+                <div class="settingsGroup">
+                    <div class="settingsGroupHeader">
+                        <span class="settingsGroupTitle">Import de comptes</span>
+                        <span class="settingsGroupDesc">Récupérez vos comptes depuis un autre launcher</span>
+                    </div>
+                    
+                    <div class="settingsOption">
+                        <div class="settingsOptionLeft">
+                            <span class="settingsOptionTitle">Récupérer les comptes enregistrés</span>
+                            <span class="settingsOptionDesc">Importez vos comptes depuis un autre launcher ou une sauvegarde</span>
+                        </div>
+                        <div class="settingsOptionRight">
+                            <button class="settingsActionButton" id="settingsImportAccountsButton">
+                                <svg class="settingsActionIcon" viewBox="0 0 24 24" width="16" height="16">
+                                    <path fill="currentColor" d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                    <path fill="currentColor" d="M12,11L9,14H11V18H13V14H15L12,11Z"/>
+                                </svg>
+                                Récupérer les comptes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="settingsTabMetin2" class="settingsTab" style="display: none;">
+            <div class="settingsTabHeader">
+                <span class="settingsTabHeaderText">Configuration Metin2</span>
+                <span class="settingsTabHeaderDesc">Paramètres spécifiques au serveur Metin2</span>
+            </div>
+            
+            <div class="settingsContainer">
+                <!-- Paramètres de résolution -->
+                <div class="settingsGroup">
+                    <div class="settingsGroupHeader">
+                        <span class="settingsGroupTitle">Résolution d'écran</span>
+                        <span class="settingsGroupDesc">Configurez la résolution du jeu Metin2</span>
+                    </div>
+                    
+                    <div class="settingsOption">
+                        <div class="settingsOptionLeft">
+                            <span class="settingsOptionTitle">Résolution prédéfinie</span>
+                            <span class="settingsOptionDesc">Choisissez une résolution courante</span>
+                        </div>
+                        <div class="settingsOptionRight">
+                            <div class="settingsSelectContainer">
+                                <div class="settingsSelectSelected" id="metin2ResolutionSelected">1280x720</div>
+                                <div class="settingsSelectOptions" hidden id="metin2ResolutionOptions">
+                                    <div value="custom">Personnalisée</div>
+                                    <div value="1280x720" selected>1280x720 (HD)</div>
+                                    <div value="1366x768">1366x768</div>
+                                    <div value="1600x900">1600x900 (HD+)</div>
+                                    <div value="1920x1080">1920x1080 (Full HD)</div>
+                                    <div value="2560x1440">2560x1440 (2K)</div>
+                                    <div value="3840x2160">3840x2160 (4K)</div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settingsOption" id="customResolutionContainer" style="display: none;">
+                        <div class="settingsOptionLeft">
+                            <span class="settingsOptionTitle">Résolution personnalisée</span>
+                            <span class="settingsOptionDesc">Définissez une résolution personnalisée</span>
+                        </div>
+                        <div class="settingsOptionRight">
+                            <div class="settingsCustomResolution">
+                                <input type="number" id="metin2CustomWidth" cValue="GameWidth" placeholder="Largeur" min="800" max="7680" value="1280">
+                                <span class="resolutionSeparator">x</span>
+                                <input type="number" id="metin2CustomHeight" cValue="GameHeight" placeholder="Hauteur" min="600" max="4320" value="720">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Paramètres d'affichage -->
+                <div class="settingsGroup">
+                    <div class="settingsGroupHeader">
+                        <span class="settingsGroupTitle">Options Générales</span>
+                        <span class="settingsGroupDesc">Options générales du jeu</span>
+                    </div>
+                    
+                    <div class="settingsOption">
+                        <div class="settingsOptionLeft">
+                            <span class="settingsOptionTitle">Mode plein écran</span>
+                            <span class="settingsOptionDesc">Lancer le jeu en mode plein écran</span>
+                        </div>
+                        <div class="settingsOptionRight">
+                            <label class="toggleSwitch">
+                                <input type="checkbox" id="metin2Fullscreen" cValue="Fullscreen">
+                                <span class="toggleSwitchSlider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="settingsOption">
+                        <div class="settingsOptionLeft">
+                            <span class="settingsOptionTitle">Volume de la musique</span>
+                            <span class="settingsOptionDesc">Contrôlez le volume de la musique du jeu</span>
+                        </div>
+                        <div class="settingsOptionRight">
+                            <div class="settingsVolumeContainer">
+                                <input type="range" id="metin2MusicVolume" cValue="MusicVolume" min="0" max="100" value="100" class="settingsVolumeSlider">
+                                <span class="settingsVolumeValue" id="metin2MusicVolumeValue">100%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="settingsOption">
+                        <div class="settingsOptionLeft">
+                            <span class="settingsOptionTitle">Qualité graphique</span>
+                            <span class="settingsOptionDesc">Ajustez la qualité des effets et ombres</span>
+                        </div>
+                        <div class="settingsOptionRight">
+                            <select id="metin2GraphicsQuality" cValue="GraphicsQuality" class="settingsSelect">
+                                <option value="low">Faible</option>
+                                <option value="medium" selected>Moyen</option>
+                                <option value="high">Élevé</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Fichiers du jeu -->
+                <div class="settingsGroup">
+                    <div class="settingsGroupHeader">
+                        <span class="settingsGroupTitle">Fichiers du jeu</span>
+                        <span class="settingsGroupDesc">Accès rapide aux dossiers importants</span>
+                    </div>
+                    
+                    <div class="settingsOption">
+                        <div class="settingsOptionLeft">
+                            <span class="settingsOptionTitle">Répertoire du Jeu</span>
+                            <span class="settingsOptionDesc">Ouvrir le dossier contenant les fichiers de Jeu.</span>
+                        </div>
+                        <div class="settingsOptionRight">
+                            <button class="settingsActionButton" id="metin2OpenConfigFolder">
+                                <svg class="settingsActionIcon" viewBox="0 0 24 24" width="16" height="16">
+                                    <path fill="currentColor" d="M12,2A3,3 0 0,1 15,5V7H20A2,2 0 0,1 22,9V19A2,2 0 0,1 20,21H4A2,2 0 0,1 2,19V9A2,2 0 0,1 4,7H9V5A3,3 0 0,1 12,2M12,4A1,1 0 0,0 11,5V7H13V5A1,1 0 0,0 12,4Z"/>
+                                </svg>
+                                Ouvrir le dossier
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="settingsOption">
+                        <div class="settingsOptionLeft">
+                            <span class="settingsOptionTitle">Répertoire du Launcher</span>
+                            <span class="settingsOptionDesc">Ouvrir le dossier contenant le fichier contenant le launcher.</span>
+                        </div>
+                        <div class="settingsOptionRight">
+                            <button class="settingsActionButton" id="metin2OpenGameFolder">
+                                <svg class="settingsActionIcon" viewBox="0 0 24 24" width="16" height="16">
+                                    <path fill="currentColor" d="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z"/>
+                                </svg>
+                                Ouvrir le dossier
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="settingsTabAbout" class="settingsTab" style="display: none;">
+            <div class="settingsTabHeader">
+                <span class="settingsTabHeaderText">About the Launcher</span>
+                <span class="settingsTabHeaderDesc">Information about your Metin2 launcher</span>
+            </div>
+
+            <div class="settingsAboutSimple">
+
+                <div class="settingsAboutInfo">
+                    <h3>YourServerName - Launcher</h3>
+                    <p>Version: 1.0.0</p>
+                    <p>Made with ❤︎ for the Metin2 community</p>
+                </div>
+                <div class="settingsAboutLogo">
+                    <img src="./assets/images/SealCircle.png" alt="YourServerName" style="width: 32px; height: 32px;">
+                </div>
+            </div>
+        </div>
+        <div id="settingsTabUpdate" class="settingsTab" style="display: none;">
+            <div class="settingsTabHeader">
+                <span class="settingsTabHeaderText"><%- lang('settings.launcherUpdatesHeaderText') %></span>
+                <span class="settingsTabHeaderDesc"><%- lang('settings.launcherUpdatesHeaderDesc') %></span>
+            </div>
+            <div id="settingsUpdateStatusContainer">
+                <div id="settingsUpdateStatusContent">
+                    <div id="settingsUpdateStatusHeadline">
+                        <span id="settingsUpdateTitle"><!-- You Are Running the Latest Version --></span>
+                    </div>
+                    <div id="settingsUpdateVersion">
+                        <div id="settingsUpdateVersionCheck">&#10003;</div>
+                        <div id="settingsUpdateVersionDetails">
+                            <span id="settingsUpdateVersionTitle"><%- lang('settings.stableRelease') %></span>
+                            <div id="settingsUpdateVersionLine">
+                                <span id="settingsUpdateVersionText"><%- lang('settings.versionText') %> </span>
+                                <span id="settingsUpdateVersionValue">0.0.1-alpha.18</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="settingsUpdateActionContainer">
+                        <button id="settingsUpdateActionButton"><%- lang('settings.checkForUpdates') %></button>
+                    </div>
+                </div>
+            </div>
+            <div class="settingsChangelogContainer">
+                <div class="settingsChangelogContent">
+                    <div class="settingsChangelogHeadline">
+                        <div class="settingsChangelogLabel"><%- lang('settings.whatsNew') %></div>
+                        <div class="settingsChangelogTitle"><%- lang('settings.updateReleaseNotes') %></div>
+                    </div>
+                    <div class="settingsChangelogText">
+                        <%- lang('settings.noReleaseNotes') %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal pour récupérer les comptes enregistrés -->
+    <div id="importAccountsModal" class="modal-overlay" style="display: none;">
+        <div class="modal-container">
+            <div class="modal-header">
+                <span class="modal-title">Récupérer les comptes enregistrés</span>
+                <button class="modal-close" id="importAccountsModalClose">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div class="modal-description">
+                    <p>Sélectionnez le dossier "UserData" de votre ancien dossier du jeu.</p>
+                </div>
+                <div class="modal-folder-selection">
+                    <div class="folder-selection-container">
+                        <div class="folder-selection-icon">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path fill="currentColor" d="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z"/>
+                            </svg>
+                        </div>
+                        <input type="text" id="importAccountsFolderPath" class="folder-path-input" placeholder="Aucun dossier sélectionné" readonly>
+                        <button class="folder-select-button" id="selectImportFolderButton">Sélectionner un dossier</button>
+                    </div>
+                </div>
+                <div class="modal-status" id="importAccountsStatus" style="display: none;">
+                    <div class="status-content">
+                        <div class="status-icon" id="importStatusIcon">&#8226;</div>
+                        <span class="status-text" id="importStatusText">En cours...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-button modal-button-secondary" id="importAccountsCancel">Annuler</button>
+                <button class="modal-button modal-button-primary" id="importAccountsConfirm" disabled>Importer</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="./assets/js/scripts/settings.js"></script>
+    
+</div>

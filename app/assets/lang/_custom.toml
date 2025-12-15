@@ -1,0 +1,21 @@
+# Custom Language File for Launcher Customizer
+# Update these values to customize your launcher branding
+
+[ejs.app]
+title = "YourServerName Launcher"
+
+[ejs.landing]
+mediaGitHubURL = "https://yoursite.com"
+mediaXURL = "#"
+mediaInstagramURL = "#"
+mediaYouTubeURL = "#"
+mediaDiscordURL = "https://discord.gg/yourdiscord"
+
+[ejs.settings]
+sourceGithubLink = "https://github.com/yourusername/metin2-launcher"
+supportLink = "https://yoursite.com/support"
+
+[ejs.welcome]
+welcomeHeader = "WELCOME TO YOURSERVERNAME"
+welcomeDescription = "Welcome to our Metin2 private server. Enjoy your gaming experience with automatic updates and file verification. The launcher will handle all game files automatically."
+welcomeDescCTA = "You are just a few clicks away from the game."

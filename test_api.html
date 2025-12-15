@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Launcher API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .config-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .config-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .response {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .response.success {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .response.error {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .response h4 {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .response pre {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 15px;
+            color: #666;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab {
+                border-bottom: 1px solid #e0e0e0;
+                border-left: 3px solid transparent;
+            }
+
+            .tab.active {
+                border-bottom-color: #e0e0e0;
+                border-left-color: #667eea;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Launcher API Tester</h1>
+        <p class="subtitle">Test your Metin2 Launcher API endpoints easily</p>
+
+        <div class="config-section">
+            <h3>⚙️ Configuration</h3>
+            <div class="form-group">
+                <label for="apiUrl">API URL:</label>
+                <input type="text" id="apiUrl" value="http://localhost/launcher-api.php" placeholder="http://localhost/launcher-api.php">
+            </div>
+            <div class="form-group">
+                <label for="apiKey">API Key:</label>
+                <input type="text" id="apiKey" value="your_secure_api_key" placeholder="your_secure_api_key">
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('login')">Login</button>
+            <button class="tab" onclick="switchTab('register')">Register</button>
+            <button class="tab" onclick="switchTab('userinfo')">User Info</button>
+        </div>
+
+        <!-- Login Tab -->
+        <div id="login-tab" class="tab-content active">
+            <div class="info-box">
+                <strong>Test Account:</strong>
+                Username: <code>testuser</code> | Password: <code>password123</code>
+            </div>
+
+            <div class="form-group">
+                <label for="loginUsername">Username:</label>
+                <input type="text" id="loginUsername" value="testuser" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" value="password123" placeholder="Enter password">
+            </div>
+            <button class="btn" onclick="testLogin()">🔐 Test Login</button>
+        </div>
+
+        <!-- Register Tab -->
+        <div id="register-tab" class="tab-content">
+            <div class="info-box">
+                <strong>Create New Account</strong>
+                Username must be 3-20 characters (letters, numbers, underscore only)
+            </div>
+
+            <div class="form-group">
+                <label for="regUsername">Username:</label>
+                <input type="text" id="regUsername" placeholder="newuser" pattern="[a-zA-Z0-9_]{3,20}">
+            </div>
+            <div class="form-group">
+                <label for="regEmail">Email:</label>
+                <input type="email" id="regEmail" placeholder="user@example.com">
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Password:</label>
+                <input type="password" id="regPassword" placeholder="Min 6 characters">
+            </div>
+            <button class="btn" onclick="testRegister()">📝 Test Registration</button>
+        </div>
+
+        <!-- User Info Tab -->
+        <div id="userinfo-tab" class="tab-content">
+            <div class="info-box">
+                <strong>Get User Information</strong>
+                Enter a user ID to retrieve their information
+            </div>
+
+            <div class="form-group">
+                <label for="userId">User ID:</label>
+                <input type="number" id="userId" value="1" placeholder="1">
+            </div>
+            <button class="btn" onclick="testUserInfo()">👤 Get User Info</button>
+        </div>
+
+        <!-- Response Area -->
+        <div id="response" class="response">
+            <h4 id="responseTitle"></h4>
+            <pre id="responseBody"></pre>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+
+            // Hide response
+            document.getElementById('response').style.display = 'none';
+        }
+
+        function showResponse(success, title, data) {
+            const responseDiv = document.getElementById('response');
+            const responseTitle = document.getElementById('responseTitle');
+            const responseBody = document.getElementById('responseBody');
+
+            responseDiv.className = 'response ' + (success ? 'success' : 'error');
+            responseTitle.textContent = title;
+            responseBody.textContent = JSON.stringify(data, null, 2);
+            responseDiv.style.display = 'block';
+
+            // Scroll to response
+            responseDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        async function makeRequest(action, data) {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const apiKey = document.getElementById('apiKey').value;
+
+            data.action = action;
+            data.api_key = apiKey;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showResponse(true, '✅ Success', result);
+                } else {
+                    showResponse(false, '❌ Error', result);
+                }
+            } catch (error) {
+                showResponse(false, '❌ Request Failed', {
+                    error: error.message,
+                    note: 'Make sure the API is running and CORS is enabled'
+                });
+            }
+        }
+
+        function testLogin() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!username || !password) {
+                alert('Please enter both username and password');
+                return;
+            }
+
+            makeRequest('login', {
+                username: username,
+                password: password
+            });
+        }
+
+        function testRegister() {
+            const username = document.getElementById('regUsername').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+
+            if (!username || !email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            makeRequest('register', {
+                username: username,
+                email: email,
+                password: password
+            });
+        }
+
+        function testUserInfo() {
+            const userId = document.getElementById('userId').value;
+
+            if (!userId) {
+                alert('Please enter a user ID');
+                return;
+            }
+
+            makeRequest('user_info', {
+                user_id: userId
+            });
+        }
+
+        // Auto-fill API URL from current location if running locally
+        window.addEventListener('load', () => {
+            const currentUrl = window.location.href;
+            if (currentUrl.includes('localhost') || currentUrl.includes('127.0.0.1')) {
+                const baseUrl = window.location.protocol + '//' + window.location.host;
+                document.getElementById('apiUrl').value = baseUrl + '/launcher-api.php';
+            }
+        });
+    </script>
+</body>
+</html>

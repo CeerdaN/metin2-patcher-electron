@@ -1,0 +1,64 @@
+<div id="gameConfigContainer" style="display: none;">
+    <div id="gameConfigContent">
+        <div id="gameConfigHeader">
+            <div id="gameConfigLogo">
+                <img src="assets/images/SealCircle.png" alt="YourServerName" style="width: 50px; height: 50px;">
+            </div>
+            <h1 id="gameConfigTitle">Game Configuration</h1>
+            <p id="gameConfigSubtitle">Configure graphics settings before first launch</p>
+        </div>
+        
+        <div id="gameConfigForm">
+            <div class="configGroup">
+                <label for="configResolution">Résolution</label>
+                <select id="configResolution" class="configSelect">
+                    <option value="1920x1080">1920x1080 (Full HD)</option>
+                    <option value="1680x1050">1680x1050</option>
+                    <option value="1600x900">1600x900</option>
+                    <option value="1440x900">1440x900</option>
+                    <option value="1366x768">1366x768 (HD)</option>
+                    <option value="1280x720">1280x720 (HD Ready)</option>
+                    <option value="1024x768">1024x768</option>
+                </select>
+            </div>
+            
+            <div class="configGroup">
+                <label for="configFullscreen">Mode d'affichage</label>
+                <select id="configFullscreen" class="configSelect">
+                    <option value="0">Fenêtré</option>
+                    <option value="1">Plein écran</option>
+                </select>
+            </div>
+            
+            <div class="configGroup">
+                <label for="configQuality">Qualité graphique</label>
+                <select id="configQuality" class="configSelect">
+                    <option value="low">Faible</option>
+                    <option value="medium" selected>Moyen</option>
+                    <option value="high">Élevé</option>
+                </select>
+            </div>
+            
+            <div class="configGroup">
+                <label for="configMusicVolume">Volume de la musique</label>
+                <div class="volumeContainer">
+                    <input type="range" id="configMusicVolume" class="configSlider" min="0" max="100" value="100" step="1">
+                    <span id="volumeValue" class="volumeValue">1.000</span>
+                </div>
+            </div>
+            
+            <div class="configButtons">
+                <button id="configSaveButton" class="configButton configButtonPrimary">
+                    <span id="configSaveButtonText">Lancer le jeu</span>
+                </button>
+                <button id="configCancelButton" class="configButton configButtonSecondary">
+                    Annuler
+                </button>
+            </div>
+        </div>
+        
+        <div id="gameConfigFooter">
+            <p>Ces paramètres peuvent être modifiés plus tard dans les paramètres du jeu.</p>
+        </div>
+    </div>
+</div>
