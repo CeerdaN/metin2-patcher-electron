@@ -482,20 +482,37 @@ To use this launcher, you need to host three things on your web server:
 
 ### 📦 Included Example Files
 
-This repository includes complete working examples to get you started:
+This repository includes complete working examples specifically designed for Metin2 private servers:
 
-- **`example_launcher_api.php`** - Complete authentication API (ready for XAMPP)
-- **`database_schema.sql`** - MySQL database structure with sample data
+- **`example_launcher_api.php`** - Complete authentication API compatible with Metin2
+- **`database_schema.sql`** - Schema for launcher tables (works with existing Metin2 database)
 - **`test_api.html`** - Beautiful web interface to test your API
 - **`API_SETUP_GUIDE.md`** - Step-by-step setup instructions
 
-**Quick Start with Example API:**
-1. Install XAMPP
-2. Import `database_schema.sql` into MySQL
-3. Copy `example_launcher_api.php` to `htdocs/`
-4. Open `test_api.html` in your browser to test!
+**IMPORTANT - Metin2 Specific Setup:**
 
-See [API_SETUP_GUIDE.md](API_SETUP_GUIDE.md) for detailed instructions.
+This API is designed to work with **Metin2's existing database structure**, NOT create a new one!
+
+**Key Points:**
+- Uses Metin2's existing `account` database and `account` table
+- Uses MySQL's old PASSWORD() function (Metin2's native password format: *HEX...)
+- Compatible with MySQL 5.7 or lower / MariaDB 10.1 or lower
+- Does NOT work with MySQL 8+ (PASSWORD() function was removed)
+
+**Quick Start with Example API:**
+1. Install XAMPP with MySQL 5.7 (recommended for Metin2 compatibility)
+2. Use your existing `account` database (DO NOT create new database)
+3. Import `database_schema.sql` into the `account` database (adds login tracking tables only)
+4. Copy `example_launcher_api.php` to `htdocs/launcher-api.php`
+5. Configure the API to connect to your `account` database
+6. Open `test_api.html` in your browser to test!
+
+**MySQL Version Compatibility:**
+- ✅ **MySQL 5.7 or lower** - Full compatibility
+- ✅ **MariaDB 10.1 or lower** - Full compatibility
+- ❌ **MySQL 8.0+** - PASSWORD() function removed, requires code modification
+
+See [API_SETUP_GUIDE.md](API_SETUP_GUIDE.md) for detailed instructions and troubleshooting.
 
 ---
 

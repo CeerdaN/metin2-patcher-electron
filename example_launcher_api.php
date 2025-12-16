@@ -1,29 +1,38 @@
 <?php
 /**
- * Example Launcher API
+ * Metin2 Launcher Authentication API
  *
- * This is a working example of a launcher authentication API.
- * You can run this on XAMPP or any PHP server with MySQL.
+ * This is a working example API designed specifically for Metin2 private servers.
+ * It works with Metin2's EXISTING database structure and password hashing system.
+ *
+ * IMPORTANT FOR METIN2 SERVERS:
+ * - Uses Metin2's existing "account" database and "account" table
+ * - Uses MySQL's PASSWORD() function (Metin2's native password format)
+ * - Does NOT create new tables or modify existing Metin2 database
+ * - Password format: *E56A114692FE0DE073F9A1DD68A00EEB9703F3F1 (MySQL PASSWORD)
  *
  * FEATURES:
- * - User login authentication
- * - Secure password hashing (bcrypt)
+ * - Account login authentication (compatible with Metin2)
+ * - Optional account registration (uses Metin2's PASSWORD() function)
  * - API key validation
  * - JSON responses
  * - Error handling
- * - Basic rate limiting
+ * - Rate limiting for security
+ * - Login attempt tracking
  *
  * REQUIREMENTS:
  * - PHP 7.4 or higher
- * - MySQL database
+ * - MySQL 5.7 or lower (for PASSWORD() function support)
+ *   OR MariaDB 10.1 or lower
  * - PDO extension enabled
+ * - Existing Metin2 database with "account" table
  *
  * SETUP INSTRUCTIONS:
- * 1. Create a MySQL database (see schema below)
- * 2. Update the database configuration section
+ * 1. Import database_schema.sql into your "account" database (adds login_attempts table)
+ * 2. Update the database configuration section below
  * 3. Update the API_KEY to match your launcher configuration
  * 4. Upload to your web server
- * 5. Test with the launcher
+ * 5. Test with the launcher or test_api.html
  */
 
 // ============================================================================
@@ -32,7 +41,7 @@
 
 // Database Configuration
 define('DB_HOST', 'localhost');           // Usually 'localhost' for XAMPP
-define('DB_NAME', 'metin2_launcher');     // Your database name
+define('DB_NAME', 'account');             // Metin2's account database name
 define('DB_USER', 'root');                // Your MySQL username (default: root for XAMPP)
 define('DB_PASS', '');                    // Your MySQL password (default: empty for XAMPP)
 
@@ -46,7 +55,7 @@ define('RATE_LIMIT_WINDOW', 300);         // Time window in seconds (5 minutes)
 // Enable/Disable Features
 define('ENABLE_RATE_LIMITING', true);     // Enable rate limiting
 define('ENABLE_LOGGING', true);           // Enable login attempt logging
-define('REQUIRE_EMAIL_VERIFICATION', false); // Require email verification (implement separately)
+define('ENABLE_REGISTRATION', false);     // Allow new account registration (disable for existing servers)
 
 // ============================================================================
 // ERROR REPORTING (Disable in production!)
@@ -226,8 +235,8 @@ function handleLogin($pdo) {
         sendError('Username and password are required');
     }
 
-    // Sanitize username
-    if (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $username)) {
+    // Sanitize username (Metin2 allows 4-16 characters)
+    if (!preg_match('/^[a-zA-Z0-9_]{4,16}$/', $username)) {
         sendError('Invalid username format');
     }
 
@@ -242,58 +251,48 @@ function handleLogin($pdo) {
         cleanOldAttempts($pdo);
     }
 
-    // Find user in database
+    // Find account in database using Metin2's PASSWORD() function
     try {
+        // IMPORTANT: Metin2 uses MySQL's PASSWORD() function for password hashing
+        // The password column stores hashes like: *E56A114692FE0DE073F9A1DD68A00EEB9703F3F1
         $stmt = $pdo->prepare("
-            SELECT id, username, password_hash, email, is_banned, is_verified
-            FROM users
-            WHERE username = ? OR email = ?
+            SELECT id, login, email, status
+            FROM account
+            WHERE login = ? AND password = PASSWORD(?)
             LIMIT 1
         ");
-        $stmt->execute([$username, $username]);
-        $user = $stmt->fetch();
+        $stmt->execute([$username, $password]);
+        $account = $stmt->fetch();
 
-        // User not found
-        if (!$user) {
+        // Account not found or password incorrect
+        if (!$account) {
             logLoginAttempt($pdo, $username, $ip, false);
             sendError('Invalid username or password');
         }
 
-        // Check if banned
-        if ($user['is_banned']) {
+        // Check if banned (Metin2 uses 'status' field: OK, BLOCK, etc.)
+        if ($account['status'] !== 'OK') {
             logLoginAttempt($pdo, $username, $ip, false);
-            sendError('Your account has been banned');
+            $statusMsg = ($account['status'] === 'BLOCK') ? 'banned' : 'suspended';
+            sendError("Your account has been {$statusMsg}");
         }
 
-        // Check if email verified (if enabled)
-        if (REQUIRE_EMAIL_VERIFICATION && !$user['is_verified']) {
-            logLoginAttempt($pdo, $username, $ip, false);
-            sendError('Please verify your email address first');
-        }
-
-        // Verify password
-        if (!password_verify($password, $user['password_hash'])) {
-            logLoginAttempt($pdo, $username, $ip, false);
-            sendError('Invalid username or password');
-        }
-
-        // Update last login
+        // Update last login (Metin2's last_play field)
         $stmt = $pdo->prepare("
-            UPDATE users
-            SET last_login = NOW(),
-                last_ip = ?
+            UPDATE account
+            SET last_play = NOW()
             WHERE id = ?
         ");
-        $stmt->execute([$ip, $user['id']]);
+        $stmt->execute([$account['id']]);
 
         // Log successful login
         logLoginAttempt($pdo, $username, $ip, true);
 
         // Send success response
         sendSuccess('Login successful', [
-            'user_id' => $user['id'],
-            'username' => $user['username'],
-            'email' => $user['email']
+            'account_id' => $account['id'],
+            'username' => $account['login'],
+            'email' => $account['email']
         ]);
 
     } catch (PDOException $e) {
@@ -306,18 +305,24 @@ function handleLogin($pdo) {
  * Handle registration request
  */
 function handleRegister($pdo) {
+    // Check if registration is enabled
+    if (!ENABLE_REGISTRATION) {
+        sendError('Registration is disabled. Please contact an administrator to create an account.');
+    }
+
     // Validate required fields
     $username = trim($_POST['username'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
+    $socialId = trim($_POST['social_id'] ?? '000000-0000000'); // Metin2 requires social_id
 
     if (empty($username) || empty($email) || empty($password)) {
         sendError('All fields are required');
     }
 
-    // Validate username format
-    if (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $username)) {
-        sendError('Username must be 3-20 characters (letters, numbers, underscore only)');
+    // Validate username format (Metin2 allows 4-16 characters)
+    if (!preg_match('/^[a-zA-Z0-9_]{4,16}$/', $username)) {
+        sendError('Username must be 4-16 characters (letters, numbers, underscore only)');
     }
 
     // Validate email format
@@ -326,40 +331,38 @@ function handleRegister($pdo) {
     }
 
     // Validate password strength
-    if (strlen($password) < 6) {
-        sendError('Password must be at least 6 characters');
+    if (strlen($password) < 4) {
+        sendError('Password must be at least 4 characters');
     }
 
     try {
         // Check if username exists
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+        $stmt = $pdo->prepare("SELECT id FROM account WHERE login = ?");
         $stmt->execute([$username]);
         if ($stmt->fetch()) {
             sendError('Username already exists');
         }
 
         // Check if email exists
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT id FROM account WHERE email = ?");
         $stmt->execute([$email]);
         if ($stmt->fetch()) {
             sendError('Email already registered');
         }
 
-        // Hash password
-        $passwordHash = password_hash($password, PASSWORD_BCRYPT);
-
-        // Insert user
+        // Insert account using Metin2's PASSWORD() function
+        // IMPORTANT: We use PASSWORD(?) to hash the password in Metin2 format
         $stmt = $pdo->prepare("
-            INSERT INTO users (username, email, password_hash, created_at, last_ip)
-            VALUES (?, ?, ?, NOW(), ?)
+            INSERT INTO account (login, password, email, social_id, create_time)
+            VALUES (?, PASSWORD(?), ?, ?, NOW())
         ");
-        $stmt->execute([$username, $email, $passwordHash, getClientIP()]);
+        $stmt->execute([$username, $password, $email, $socialId]);
 
-        $userId = $pdo->lastInsertId();
+        $accountId = $pdo->lastInsertId();
 
         // Send success response
         sendSuccess('Registration successful! You can now login.', [
-            'user_id' => $userId,
+            'account_id' => $accountId,
             'username' => $username
         ]);
 
@@ -370,32 +373,40 @@ function handleRegister($pdo) {
 }
 
 /**
- * Handle user info request
+ * Handle account info request
  */
 function handleUserInfo($pdo) {
-    $userId = intval($_POST['user_id'] ?? 0);
+    $accountId = intval($_POST['account_id'] ?? $_POST['user_id'] ?? 0);
 
-    if ($userId <= 0) {
-        sendError('Invalid user ID');
+    if ($accountId <= 0) {
+        sendError('Invalid account ID');
     }
 
     try {
         $stmt = $pdo->prepare("
-            SELECT id, username, email, created_at, last_login
-            FROM users
+            SELECT id, login, email, create_time, last_play, status
+            FROM account
             WHERE id = ?
         ");
-        $stmt->execute([$userId]);
-        $user = $stmt->fetch();
+        $stmt->execute([$accountId]);
+        $account = $stmt->fetch();
 
-        if (!$user) {
-            sendError('User not found');
+        if (!$account) {
+            sendError('Account not found');
         }
 
-        sendSuccess('User info retrieved', $user);
+        // Return account info (without sensitive data)
+        sendSuccess('Account info retrieved', [
+            'id' => $account['id'],
+            'username' => $account['login'],
+            'email' => $account['email'],
+            'created_at' => $account['create_time'],
+            'last_login' => $account['last_play'],
+            'status' => $account['status']
+        ]);
 
     } catch (PDOException $e) {
-        error_log("User info error: " . $e->getMessage());
+        error_log("Account info error: " . $e->getMessage());
         sendError('An error occurred', 500);
     }
 }

@@ -225,29 +225,36 @@ These files contain core launcher logic and should not be changed unless you kno
 
 These files are for your reference and setup:
 
-### 📚 API Example Files
+### 📚 API Example Files (Metin2 Compatible)
 
 **`example_launcher_api.php`**
-- Complete working PHP authentication API
-- Ready to use with XAMPP
-- Includes login, registration, user info endpoints
+- Complete working PHP authentication API **designed for Metin2**
+- Uses Metin2's existing `account` database and table
+- Uses MySQL PASSWORD() function (Metin2's native password format)
+- Includes login, registration (optional), account info endpoints
 - Features rate limiting and security
+- Compatible with MySQL 5.7/MariaDB 10.1 or lower
 
 **`database_schema.sql`**
-- MySQL database structure
-- Creates users, login_attempts, sessions tables
-- Includes sample test user
+- MySQL schema for launcher-specific tables
+- **DOES NOT create new account table** - uses Metin2's existing one
+- Adds: login_attempts, launcher_sessions tables
+- Includes optional test account with PASSWORD() hashing
 - Has automatic cleanup procedures
+- Safe to import into existing Metin2 `account` database
 
 **`test_api.html`**
 - Beautiful web interface to test your API
 - No command line needed
-- Tests login, registration, user info
+- Tests login, registration, account info
 - Real-time response display
+- Works with Metin2 account structure
 
 **`API_SETUP_GUIDE.md`**
-- Step-by-step XAMPP setup instructions
-- Troubleshooting section
+- Step-by-step XAMPP setup instructions for Metin2
+- Explains Metin2's PASSWORD() function format
+- MySQL version compatibility guide
+- Troubleshooting section (including PASSWORD() function issues)
 - Security best practices
 - Advanced configuration examples
 
